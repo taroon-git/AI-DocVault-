@@ -34,7 +34,7 @@ AI DocVault is an advanced document upload and processing system powered by Fast
 ## Installation & Setup
 ### 1. Clone the Repository
 ```bash
-git clone <repo-link>
+git clone https://github.com/taroon-git/AI-DocVault-.git
 cd AI_DocVault
 ```
 
