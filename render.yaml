@@ -1,14 +1,10 @@
 services:
-  - type: web
-    name: ai-docvault
-    runtime: python
-    region: oregon  # Choose "oregon" for free tier
+  - name: ai-docvault
+    type: web
+    env: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port 10000"
+    startCommand: "bash start.sh"
     envVars:
       - key: DATABASE_URL
-        value: "envVars:
-  - key: DATABASE_URL
-    value: "mysql+pymysql://root:root@localhost:3306/ai_docvault"
-
+        sync: false
