@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Clone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 50%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: #007bff;
+            color: white;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background: #e0e0e0;
+        }
+
+        .input-container {
+            width: 50%;
+            max-width: 800px;
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .input-container button {
+            padding: 10px 15px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .input-container button:hover {
+            background: #0056b3;
+        }
+
+        /* Floating Plus Button */
+        .plus-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            line-height: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .plus-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Hide file input */
+        #fileInput {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="bot-message message">Hello! How can I help you?</div>
+    </div>
+
+    <div class="input-container">
+        <input type="text" id="queryInput" placeholder="Send a message...">
+        <button onclick="searchQuery()">Send</button>
+    </div>
+
+    <!-- Hidden File Input -->
+    <input type="file" id="fileInput" onchange="uploadFile()">
+    
+    <!-- Floating Plus Button -->
+    <div class="plus-button" onclick="document.getElementById('fileInput').click()">+</div>
+
+    <script>
+        async function uploadFile() {
+            let fileInput = document.getElementById("fileInput");
+            if (fileInput.files.length === 0) {
+                alert("Please select a file to upload.");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            let response = await fetch("/upload/", {
+                method: "POST",
+                body: formData
+            });
+
+            let result = await response.json();
+            alert(result.message); // Show alert instead of text
+        }
+
+        async function searchQuery() {
+            let userQuery = document.getElementById("queryInput").value;
+            if (!userQuery) {
+                alert("Please enter a message.");
+                return;
+            }
+
+            // Show User Message in Chat
+            let chatContainer = document.getElementById("chatContainer");
+            let userMessage = document.createElement("div");
+            userMessage.className = "user-message message";
+            userMessage.innerText = userQuery;
+            chatContainer.appendChild(userMessage);
+            document.getElementById("queryInput").value = "";
+
+            let response = await fetch(`/query/?user_query=${encodeURIComponent(userQuery)}`, {
+                method: "POST"
+            });
+
+            let data = await response.json();
+            console.log("🔍 API Response:", data);
+
+            // Show Bot Response in Chat
+            let botMessage = document.createElement("div");
+            botMessage.className = "bot-message message";
+            if (!data.results || data.results.length === 0) {
+                botMessage.innerText = "No relevant text found.";
+            } else {
+                botMessage.innerText = data.results.join("\n");
+            }
+            chatContainer.appendChild(botMessage);
+
+            // Auto scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
