@@ -71,7 +71,7 @@ For a fully free deployment, Render is recommended:
 5. Deploy and get your API running!
 
 ## Contributors
-- **Your Name** - Developer & Maintainer
+- **Tarun Sharma**
 
 ---
 🚀 **AI DocVault 🔐** - Secure, scalable, and efficient document processing.
