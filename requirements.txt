@@ -7,4 +7,6 @@ pymupdf
 faiss-cpu
 sentence-transformers
 openai
+PyPDF2
+
 
